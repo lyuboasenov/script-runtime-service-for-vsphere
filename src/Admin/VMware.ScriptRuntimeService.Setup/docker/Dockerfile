@@ -10,5 +10,4 @@ ADD /app/service/ /app/service/
 WORKDIR /app/service
 
 # Start setup cli
-CMD ["/app/service/setup"]
-
+CMD ["/bin/bash", "-c", "if [-z ${SRS_LOG} ]; then; /app/service/setup; else; /app/service/setup 2>&1 | tee \"${SRS_LOG}\"; fi"]
