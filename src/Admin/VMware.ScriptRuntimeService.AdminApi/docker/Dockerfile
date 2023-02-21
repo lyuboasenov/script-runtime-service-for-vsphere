@@ -14,4 +14,4 @@ ENV ASPNETCORE_URLS http://+:5555
 EXPOSE 5555
 
 # Start SES API Gateway Endpoint Service
-CMD ["/bin/bash", "-c", "if [-z ${SRS_LOG} ]; then; /app/service/VMware.ScriptRuntimeService.AdminApi; else; /app/service/VMware.ScriptRuntimeService.AdminApi 2>&1 | tee \"${SRS_LOG}\"; fi"]
+CMD ["/bin/bash", "-c", "if [ -z ${SRS_LOG} ]; then /app/service/VMware.ScriptRuntimeService.AdminApi; else /app/service/VMware.ScriptRuntimeService.AdminApi 2>&1 | tee \"${SRS_LOG}\"; fi"]
