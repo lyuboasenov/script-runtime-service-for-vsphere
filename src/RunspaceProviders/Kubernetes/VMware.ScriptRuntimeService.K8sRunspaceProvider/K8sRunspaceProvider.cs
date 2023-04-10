@@ -264,7 +264,7 @@ namespace VMware.ScriptRuntimeService.K8sRunspaceProvider {
          var deployment = _client.AppsV1.CreateNamespacedDeployment(deploymentBody, _namespace);
          _client.CoreV1.CreateNamespacedService(serviceBody, _namespace);
 
-         AddSrsIngressWebConsolePath(appName);
+         // AddSrsIngressWebConsolePath(appName);
 
          return deployment;
       }
@@ -488,7 +488,7 @@ namespace VMware.ScriptRuntimeService.K8sRunspaceProvider {
       public void KillWebConsole(string id) {
          _logger.LogInformation($"Kill Runspace: {id}");
          try {
-            RemoveSrsIngressWebConsolePath(id);
+            // RemoveSrsIngressWebConsolePath(id);
             _client.AppsV1.DeleteNamespacedDeployment(id, _namespace);
             _client.CoreV1.DeleteNamespacedService(id, _namespace);
             // Wait pod to be deleted
@@ -645,35 +645,35 @@ namespace VMware.ScriptRuntimeService.K8sRunspaceProvider {
                int retryCount = 1;
 
                // Wait Pod to become running and obtain IP Address
-               _logger.LogDebug($"Start waiting k8s for nginx ingress controller to update after the rule change");
+               //_logger.LogDebug($"Start waiting k8s for nginx ingress controller to update after the rule change");
 
-               do {
+               //do {
 
-                  try {
-                     _logger.LogDebug($"K8s API Call ListNamespacedEvent: \"ingress-nginx\"");
-                     eventList = _client.CoreV1.ListNamespacedEvent("ingress-nginx");
-                  } catch (Exception exc) {
-                     LogException(exc);
-                     return new K8sWebConsoleInfo {
-                        Id = webConsoleInfo.Id,
-                        CreationState = RunspaceCreationState.Error,
-                        CreationError = new RunspaceProviderException(
-                           string.Format(
-                              Resources.K8sRunspaceProvider_WaitCreateComplation_ListEvents, webConsoleInfo.Id),
-                           exc)
-                     };
-                  }
+               //   try {
+               //      _logger.LogDebug($"K8s API Call ListNamespacedEvent: \"ingress-nginx\"");
+               //      eventList = _client.CoreV1.ListNamespacedEvent("ingress-nginx");
+               //   } catch (Exception exc) {
+               //      LogException(exc);
+               //      return new K8sWebConsoleInfo {
+               //         Id = webConsoleInfo.Id,
+               //         CreationState = RunspaceCreationState.Error,
+               //         CreationError = new RunspaceProviderException(
+               //            string.Format(
+               //               Resources.K8sRunspaceProvider_WaitCreateComplation_ListEvents, webConsoleInfo.Id),
+               //            exc)
+               //      };
+               //   }
 
-                  if (eventList?.Items.Any(i => IsNginxReloadEventAfter(i, creationTime)) ?? false) {
-                     var reloadEvent = eventList.Items.First(i => IsNginxReloadEventAfter(i, creationTime));
-                     _logger.LogDebug($"NGINX reload event found {reloadEvent}");
-                     break;
-                  }
+               //   if (eventList?.Items.Any(i => IsNginxReloadEventAfter(i, creationTime)) ?? false) {
+               //      var reloadEvent = eventList.Items.First(i => IsNginxReloadEventAfter(i, creationTime));
+               //      _logger.LogDebug($"NGINX reload event found {reloadEvent}");
+               //      break;
+               //   }
 
-                  Thread.Sleep(retryIntervalMs);
+               //   Thread.Sleep(retryIntervalMs);
 
-                  retryCount++;
-               } while (retryCount < maxRetryCount);
+               //   retryCount++;
+               //} while (retryCount < maxRetryCount);
 
                if (retryCount >= maxRetryCount) {
                   // Timeout
@@ -684,7 +684,7 @@ namespace VMware.ScriptRuntimeService.K8sRunspaceProvider {
                   };
                } else {
                   // HACK: Give the ingress a second to get up
-                  Thread.Sleep(1000);
+                  // Thread.Sleep(1000);
                   // Success, everything should be in place
                   return new K8sWebConsoleInfo {
                      Id = webConsoleInfo.Id,
@@ -731,28 +731,28 @@ namespace VMware.ScriptRuntimeService.K8sRunspaceProvider {
          retryCount = 1;
 
          // Wait Pod to become running and obtain IP Address
-         _logger.LogDebug($"Start waiting k8s for nginx ingress controller to update after the rule change");
+         //_logger.LogDebug($"Start waiting k8s for nginx ingress controller to update after the rule change");
 
-         do {
+         //do {
 
-            try {
-               _logger.LogDebug($"K8s API Call ListNamespacedEvent: \"ingress-nginx\"");
-               eventList = _client.CoreV1.ListNamespacedEvent("ingress-nginx");
-            } catch (Exception exc) {
-               LogException(exc);
-               throw;
-            }
+         //   try {
+         //      _logger.LogDebug($"K8s API Call ListNamespacedEvent: \"ingress-nginx\"");
+         //      eventList = _client.CoreV1.ListNamespacedEvent("ingress-nginx");
+         //   } catch (Exception exc) {
+         //      LogException(exc);
+         //      throw;
+         //   }
 
-            if (eventList?.Items.Any(i => IsNginxReloadEventAfter(i, startedAt)) ?? false) {
-               var reloadEvent = eventList.Items.First(i => IsNginxReloadEventAfter(i, startedAt));
-               _logger.LogDebug($"NGINX reload event found {reloadEvent}");
-               break;
-            }
+         //   if (eventList?.Items.Any(i => IsNginxReloadEventAfter(i, startedAt)) ?? false) {
+         //      var reloadEvent = eventList.Items.First(i => IsNginxReloadEventAfter(i, startedAt));
+         //      _logger.LogDebug($"NGINX reload event found {reloadEvent}");
+         //      break;
+         //   }
 
-            Thread.Sleep(retryIntervalMs);
+         //   Thread.Sleep(retryIntervalMs);
 
-            retryCount++;
-         } while (retryCount < maxRetryCount);
+         //   retryCount++;
+         //} while (retryCount < maxRetryCount);
       }
 
       private static bool IsNginxReloadEventAfter(Corev1Event e, DateTime since) {
