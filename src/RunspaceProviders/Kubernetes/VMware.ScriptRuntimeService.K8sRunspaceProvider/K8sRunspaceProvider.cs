@@ -683,6 +683,8 @@ namespace VMware.ScriptRuntimeService.K8sRunspaceProvider {
                      CreationError = new RunspaceProviderException(Resources.K8sRunspaceProvider_WaitCreateComplition_TimeOut)
                   };
                } else {
+                  // HACK: Give the ingress a second to get up
+                  Thread.Sleep(1000);
                   // Success, everything should be in place
                   return new K8sWebConsoleInfo {
                      Id = webConsoleInfo.Id,
