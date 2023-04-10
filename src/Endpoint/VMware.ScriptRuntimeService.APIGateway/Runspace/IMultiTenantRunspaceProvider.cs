@@ -107,6 +107,14 @@ namespace VMware.ScriptRuntimeService.APIGateway.Runspace {
       /// <param name="webConsoleId">Web Console id</param>
       void KillWebConsole(string userId, string webConsoleId);
 
+      /// <summary>
+      /// Removes a web console
+      /// </summary>
+      /// <param name="userId">User identifier</param>
+      /// <param name="webConsoleId">Web Console id</param>
+      /// <param name="wait">wait for complete removal of console and related object</param>
+      void KillWebConsole(string userId, string webConsoleId, bool wait);
+
 
       /// <summary>
       /// Gets all running web consoles for specified user

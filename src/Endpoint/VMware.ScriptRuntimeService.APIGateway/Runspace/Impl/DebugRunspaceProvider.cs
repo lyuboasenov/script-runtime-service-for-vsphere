@@ -63,5 +63,9 @@ namespace VMware.ScriptRuntimeService.APIGateway.Runspace.Impl {
       public IWebConsoleInfo[] ListWebConsole() {
          throw new NotImplementedException();
       }
+
+      public void WaitRemoveCompletion(IWebConsoleInfo webConsoleInfo) {
+         throw new NotImplementedException();
+      }
    }
 }

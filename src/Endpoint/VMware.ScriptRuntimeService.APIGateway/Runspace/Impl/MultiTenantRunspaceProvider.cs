@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using IdentityModel.OidcClient;
 using Microsoft.Extensions.Logging;
 using VMware.ScriptRuntimeService.APIGateway.Authentication;
 using VMware.ScriptRuntimeService.APIGateway.Properties;
@@ -111,7 +112,6 @@ namespace VMware.ScriptRuntimeService.APIGateway.Runspace.Impl
             }
          }
       }
-
 
       private void CleanupWebConsoles() {
          var webConsoleIdsToRemove = _runspacesStatsMonitor.EvaluateRunspacesToRemove(IRunspacesStatsMonitor.RunspaceType.WebConsole);
@@ -518,11 +518,18 @@ namespace VMware.ScriptRuntimeService.APIGateway.Runspace.Impl
       }
 
       public void KillWebConsole(string userId, string webConsoleId) {
+         // TODO CHANGE WAIT TO FALSE
+         KillWebConsole(userId, webConsoleId, true);
+      }
+
+      public void KillWebConsole(string userId, string webConsoleId, bool wait) {
          _logger.LogInformation($"Kill web console {webConsoleId}");
          try {
             Sessions.Instance.EnsureValidUser(userId);
 
+            IWebConsoleInfo info = null;
             if (_userWebConsoles.Contains(userId, webConsoleId)) {
+               info = _userWebConsoles.GetData(userId, webConsoleId);
                _userWebConsoles.RemoveData(userId, webConsoleId);
             }
 
@@ -531,6 +538,12 @@ namespace VMware.ScriptRuntimeService.APIGateway.Runspace.Impl
 
             if (_userWebConsoles.List(userId) == null) {
                _userWebConsoles.RemoveUser(userId);
+            }
+
+            if (wait) {
+               _logger.LogDebug("RunspaceProvider -> WaitRemoveCompletion call");
+               _runspaceProvider.WaitRemoveCompletion(info);
+               _logger.LogDebug($"Runspace provider WaitRemoveCompletion result: {info?.Id}");
             }
          } catch (Exception ex) {
             throw new RunspaceProviderException(

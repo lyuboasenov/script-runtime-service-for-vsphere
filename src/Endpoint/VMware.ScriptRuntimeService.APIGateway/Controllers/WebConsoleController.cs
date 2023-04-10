@@ -184,12 +184,12 @@ namespace VMware.ScriptRuntimeService.APIGateway.Controllers
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status401Unauthorized)]
       [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
-      public ActionResult Delete([FromRoute] string id) {
+      public ActionResult Delete([FromRoute] string id, [FromQuery] bool? wait) {
          ActionResult result;
 
          try {
             var authzToken = SessionToken.FromHeaders(Request.Headers);
-            RunspaceProviderSingleton.Instance.RunspaceProvider.KillWebConsole(authzToken.UserName, id);
+            RunspaceProviderSingleton.Instance.RunspaceProvider.KillWebConsole(authzToken.UserName, id, wait ?? false);
             result = Ok();
          } catch (Exception exc) {
             _logger.LogError(exc, "Delete runspace operation failed.");

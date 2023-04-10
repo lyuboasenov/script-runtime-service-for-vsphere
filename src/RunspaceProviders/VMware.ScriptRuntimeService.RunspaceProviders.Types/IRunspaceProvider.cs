@@ -36,6 +36,14 @@ namespace VMware.ScriptRuntimeService.RunspaceProviders.Types
       IWebConsoleInfo WaitCreateCompletion(IWebConsoleInfo webConsoleInfo);
 
       /// <summary>
+      /// Synchronously waits <see cref="IWebConsoleInfo"/> complete removal and all of related objects
+      /// Implementer decides whether to introduce timeout to not block execution.
+      /// </summary>
+      /// <param name="webConsoleInfo">WebConsoleInfo instance info to wait.</param>
+      /// <returns></returns>
+      void WaitRemoveCompletion(IWebConsoleInfo webConsoleInfo);
+
+      /// <summary>
       /// Get instance of running runspace if available, otherwise null
       /// </summary>
       /// <returns>

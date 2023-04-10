@@ -695,6 +695,66 @@ namespace VMware.ScriptRuntimeService.K8sRunspaceProvider {
          }
       }
 
+      public void WaitRemoveCompletion(IWebConsoleInfo webConsoleInfo) {
+         // Wait for the console pod to get ready
+         DateTime creationTime = DateTime.Now;
+         // Set 10 minutes timeout for container creation.
+         // Worst case would be image pulling from server.
+         int maxRetryCount = 6000;
+         int retryIntervalMs = 100;
+         int retryCount = 1;
+
+
+         _logger.LogDebug($"Waiting k8s Pod 'app:{webConsoleInfo?.Id}' to be removed");
+
+         // if no web console is passed just wait for reconfig event
+         if (null != webConsoleInfo) {
+            V1PodList podList = null;
+            do {
+               try {
+                  Thread.Sleep(retryIntervalMs);
+
+                  _logger.LogDebug($"K8s API Call ListNamespacedPod: {webConsoleInfo.Id}");
+                  podList = _client.CoreV1.ListNamespacedPod(_namespace, labelSelector: $"app={webConsoleInfo.Id}");
+
+                  retryCount++;
+               } catch (Exception exc) {
+                  LogExpectedException(exc);
+                  break;
+               }
+            } while (podList != null && podList.Items.Count > 0 && retryCount < maxRetryCount);
+         }
+
+         // The pod is up and running we not wait for UPDATE event from the ingress controller
+         Corev1EventList eventList = null;
+
+         retryCount = 1;
+
+         // Wait Pod to become running and obtain IP Address
+         _logger.LogDebug($"Start waiting k8s for nginx ingress controller to update after the rule change");
+
+         do {
+
+            try {
+               _logger.LogDebug($"K8s API Call ListNamespacedEvent: \"ingress-nginx\"");
+               eventList = _client.CoreV1.ListNamespacedEvent("ingress-nginx");
+            } catch (Exception exc) {
+               LogException(exc);
+               throw;
+            }
+
+            if (eventList?.Items.Any(i => IsNginxReloadEventAfter(i, creationTime)) ?? false) {
+               var reloadEvent = eventList.Items.First(i => IsNginxReloadEventAfter(i, creationTime));
+               _logger.LogDebug($"NGINX reload event found {reloadEvent}");
+               break;
+            }
+
+            Thread.Sleep(retryIntervalMs);
+
+            retryCount++;
+         } while (retryCount < maxRetryCount);
+      }
+
       private static bool IsNginxReloadEventAfter(Corev1Event e, DateTime since) {
          return e.LastTimestamp?.CompareTo(since) > 0 &&
             e.Type.Equals("Normal", StringComparison.InvariantCultureIgnoreCase) &&
