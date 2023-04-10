@@ -523,7 +523,7 @@ namespace VMware.ScriptRuntimeService.APIGateway.Runspace.Impl
       }
 
       public void KillWebConsole(string userId, string webConsoleId, bool wait) {
-         _logger.LogInformation($"Kill web console {webConsoleId}");
+         _logger.LogInformation($"Kill web console {webConsoleId} - wait {wait}");
          try {
             Sessions.Instance.EnsureValidUser(userId);
 
@@ -541,7 +541,7 @@ namespace VMware.ScriptRuntimeService.APIGateway.Runspace.Impl
             }
 
             if (wait) {
-               _logger.LogDebug("RunspaceProvider -> WaitRemoveCompletion call");
+               _logger.LogDebug($"RunspaceProvider -> WaitRemoveCompletion({info?.Id}) call");
                _runspaceProvider.WaitRemoveCompletion(info);
                _logger.LogDebug($"Runspace provider WaitRemoveCompletion result: {info?.Id}");
             }
