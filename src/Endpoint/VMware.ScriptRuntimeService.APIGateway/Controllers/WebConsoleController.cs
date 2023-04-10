@@ -189,7 +189,8 @@ namespace VMware.ScriptRuntimeService.APIGateway.Controllers
 
          try {
             var authzToken = SessionToken.FromHeaders(Request.Headers);
-            RunspaceProviderSingleton.Instance.RunspaceProvider.KillWebConsole(authzToken.UserName, id, wait ?? false);
+            // TODO CHANGE WAIT TO FALSE
+            RunspaceProviderSingleton.Instance.RunspaceProvider.KillWebConsole(authzToken.UserName, id, wait ?? true);
             result = Ok();
          } catch (Exception exc) {
             _logger.LogError(exc, "Delete runspace operation failed.");

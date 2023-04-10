@@ -518,8 +518,7 @@ namespace VMware.ScriptRuntimeService.APIGateway.Runspace.Impl
       }
 
       public void KillWebConsole(string userId, string webConsoleId) {
-         // TODO CHANGE WAIT TO FALSE
-         KillWebConsole(userId, webConsoleId, true);
+         KillWebConsole(userId, webConsoleId, false);
       }
 
       public void KillWebConsole(string userId, string webConsoleId, bool wait) {
