@@ -171,7 +171,7 @@ namespace VMware.ScriptRuntimeService.DockerRunspaceProvider
          return webconsole;
       }
 
-      public void WaitRemoveCompletion(IWebConsoleInfo webconsole) {
+      public void WaitRemoveCompletion(IWebConsoleInfo webconsole, DateTime startedAt) {
 
       }
 

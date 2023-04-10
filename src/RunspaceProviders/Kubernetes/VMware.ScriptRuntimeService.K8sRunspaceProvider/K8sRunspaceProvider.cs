@@ -695,9 +695,7 @@ namespace VMware.ScriptRuntimeService.K8sRunspaceProvider {
          }
       }
 
-      public void WaitRemoveCompletion(IWebConsoleInfo webConsoleInfo) {
-         // Wait for the console pod to get ready
-         DateTime creationTime = DateTime.Now;
+      public void WaitRemoveCompletion(IWebConsoleInfo webConsoleInfo, DateTime startedAt) {
          // Set 10 minutes timeout for container creation.
          // Worst case would be image pulling from server.
          int maxRetryCount = 6000;
@@ -743,8 +741,8 @@ namespace VMware.ScriptRuntimeService.K8sRunspaceProvider {
                throw;
             }
 
-            if (eventList?.Items.Any(i => IsNginxReloadEventAfter(i, creationTime)) ?? false) {
-               var reloadEvent = eventList.Items.First(i => IsNginxReloadEventAfter(i, creationTime));
+            if (eventList?.Items.Any(i => IsNginxReloadEventAfter(i, startedAt)) ?? false) {
+               var reloadEvent = eventList.Items.First(i => IsNginxReloadEventAfter(i, startedAt));
                _logger.LogDebug($"NGINX reload event found {reloadEvent}");
                break;
             }

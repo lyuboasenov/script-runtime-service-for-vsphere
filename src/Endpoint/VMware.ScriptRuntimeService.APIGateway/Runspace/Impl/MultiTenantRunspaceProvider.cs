@@ -532,6 +532,7 @@ namespace VMware.ScriptRuntimeService.APIGateway.Runspace.Impl
                _userWebConsoles.RemoveData(userId, webConsoleId);
             }
 
+            DateTime dateTime = DateTime.Now;
             _runspacesStatsMonitor.Unregister(webConsoleId);
             _runspaceProvider.KillWebConsole(webConsoleId);
 
@@ -541,7 +542,7 @@ namespace VMware.ScriptRuntimeService.APIGateway.Runspace.Impl
 
             if (wait) {
                _logger.LogDebug($"RunspaceProvider -> WaitRemoveCompletion({info?.Id}) call");
-               _runspaceProvider.WaitRemoveCompletion(info);
+               _runspaceProvider.WaitRemoveCompletion(info, dateTime);
                _logger.LogDebug($"Runspace provider WaitRemoveCompletion result: {info?.Id}");
             }
          } catch (Exception ex) {

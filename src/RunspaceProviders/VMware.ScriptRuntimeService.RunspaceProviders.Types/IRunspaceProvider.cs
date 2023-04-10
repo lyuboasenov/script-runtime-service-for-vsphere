@@ -40,8 +40,9 @@ namespace VMware.ScriptRuntimeService.RunspaceProviders.Types
       /// Implementer decides whether to introduce timeout to not block execution.
       /// </summary>
       /// <param name="webConsoleInfo">WebConsoleInfo instance info to wait.</param>
+      /// <param name="startedAt">When the ingress rules were removed.</param>
       /// <returns></returns>
-      void WaitRemoveCompletion(IWebConsoleInfo webConsoleInfo);
+      void WaitRemoveCompletion(IWebConsoleInfo webConsoleInfo, DateTime startedAt);
 
       /// <summary>
       /// Get instance of running runspace if available, otherwise null
